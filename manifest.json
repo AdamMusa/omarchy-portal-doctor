@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "izeesoft.portal-doctor",
+  "name": "Portal Doctor",
+  "version": "0.1.0",
+  "author": "Adam Moussa Ali",
+  "license": "MIT",
+  "description": "Read-only XDG desktop portal health and backend routing inspector for Wayland sessions.",
+  "kinds": [
+    "service",
+    "bar-widget",
+    "panel"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "BarWidget.qml",
+    "panel": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Portal Doctor",
+    "description": "See which desktop portal actually handles screenshots, sharing, and file dialogs.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
