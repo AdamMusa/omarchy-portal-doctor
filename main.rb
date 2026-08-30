@@ -293,9 +293,17 @@ OmarchyUI.plugin do
 
   status_color = lambda do |status|
     value = status.to_s.downcase
-    if value =~ /broken|critical|missing|mismatch|drift|inactive|slow|tight|hotspot|invalid/
+    danger = false
+    healthy = false
+    %w[broken critical missing mismatch drift inactive slow tight hotspot invalid].each do |token|
+      danger = true if value.include?(token)
+    end
+    %w[ready valid verified finished aligned unique internal familiar steady covered available detected normal].each do |token|
+      healthy = true if value.include?(token)
+    end
+    if danger
       "#ff6b78"
-    elsif value =~ /ready|valid|verified|finished|aligned|unique|internal|familiar|steady|covered|available|detected|normal/
+    elsif healthy
       "#67d4c0"
     else
       "#efc66b"
@@ -304,9 +312,17 @@ OmarchyUI.plugin do
 
   status_icon = lambda do |status|
     value = status.to_s.downcase
-    if value =~ /broken|critical|missing|mismatch|drift|inactive|slow|tight|hotspot|invalid/
+    danger = false
+    healthy = false
+    %w[broken critical missing mismatch drift inactive slow tight hotspot invalid].each do |token|
+      danger = true if value.include?(token)
+    end
+    %w[ready valid verified finished aligned unique internal familiar steady covered available detected normal].each do |token|
+      healthy = true if value.include?(token)
+    end
+    if danger
       :warning
-    elsif value =~ /ready|valid|verified|finished|aligned|unique|internal|familiar|steady|covered|available|detected|normal/
+    elsif healthy
       :circle_check
     else
       :circle_info
