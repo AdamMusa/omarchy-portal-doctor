@@ -345,68 +345,96 @@ OmarchyUI.plugin do
   end
 
   bar_widget do
-    row spacing: 7 do
-      icon :circle_check, color: "#67d4c0"
-      text { state.snapshot.fetch("summary") }
+    row spacing: 6 do
+      icon :circle_check, size: 14, color: "#67d4c0"
+      text "PORTAL", style: :caption, color: "#67d4c0"
+      text(style: :caption) { state.snapshot.fetch("summary") }
     end
     on_click { open_panel :portal_doctor }
   end
 
   panel :portal_doctor do
-    scroll width: 660, height: 760 do
+    scroll width: 660, height: 780 do
       dynamic id: :scene, spacing: 16 do
         entries = state.snapshot.fetch("items")
-        history = state.snapshot.fetch("history")
+        ready = entries.count { |entry| entry.fetch("status", "") == "ready" }
+        inactive = entries.count { |entry| entry.fetch("status", "") == "inactive" }
 
-        row spacing: 12 do
-          icon :circle_check, size: 30, color: "#67d4c0"
-          column spacing: 2 do
-            text "Portal Doctor", style: :heading, width: 500
-            text state.snapshot.fetch("summary"), style: :caption, width: 500
-          end
-          action_button :refresh, tooltip: "Refresh", foreground: "#67d4c0" do
-            async(&refresh)
+        column spacing: 2 do
+          text "#{ready} routes are carrying desktop requests", style: :caption, width: 610
+          row spacing: 9 do
+            text "Portal", size: 30, bold: true
+            icon :circle_check, size: 22, color: "#67d4c0"
+            text "Doctor", size: 30, bold: true, width: 450
+            action_button :refresh, tooltip: "Run portal checkup", foreground: "#67d4c0" do
+              async(&refresh)
+            end
           end
         end
 
         separator
-        ready = entries.count { |entry| entry.fetch("status", "") == "ready" }
-            row spacing: 8 do
-              rectangle width: 168, height: 54, radius: 5, border_width: 1, border_color: "#67d4c0", padding: 8 do
-                text "APPLICATION", style: :caption, color: "#67d4c0"
-              end
-              icon :arrow_right, color: "#67d4c0"
-              rectangle width: 168, height: 54, radius: 5, border_width: 1, border_color: "#67d4c0", padding: 8 do
-                text "XDG PORTAL", style: :caption, color: "#67d4c0"
-              end
-              icon :arrow_right, color: "#67d4c0"
-              rectangle width: 168, height: 54, radius: 5, border_width: 1, border_color: "#67d4c0", padding: 8 do
-                text "BACKEND", style: :caption, color: "#67d4c0"
-              end
-            end
-            text "#{ready} healthy routes", size: 30, bold: true, color: "#67d4c0"
-            text "Screen sharing · file dialogs · sandbox handoff", style: :caption
-            separator
-            section_header "Session services"
-            if entries.empty?
-              column spacing: 8 do
-                        icon :circle_check, size: 34, color: "#67d4c0"
-                        text "Nothing to show yet", style: :heading
-                        text "No desktop portal services were visible in the user session.", style: :caption, wrap: true, width: 560
-                      end
-            else
-              entries.each_with_index do |entry, index|
-                row spacing: 10 do
-                  icon status_icon.call(entry.fetch("status", "")), color: status_color.call(entry.fetch("status", ""))
-                  column spacing: 2 do
-                    text entry.fetch("title"), width: 430
-                    text entry.fetch("detail", ""), style: :caption, width: 430, wrap: true
-                  end
-                  text entry.fetch("status", ""), style: :caption, color: status_color.call(entry.fetch("status", ""))
+        row spacing: 10 do
+          column spacing: 2 do
+            text "APPLICATION", style: :caption, color: "#829088"
+            icon :window, size: 24, color: "#67d4c0"
+          end
+          text "━━━━━━●━━━━━", size: 17, color: "#67d4c0"
+          column spacing: 2 do
+            text "XDG PORTAL", style: :caption, color: "#829088"
+            icon :link, size: 24, color: "#67d4c0"
+          end
+          text "━━━━━●━━━━━━", size: 17, color: "#67d4c0"
+          column spacing: 2 do
+            text "BACKEND", style: :caption, color: "#829088"
+            icon :circle_check, size: 24, color: inactive.zero? ? "#d8ff73" : "#ff8b8b"
+          end
+        end
+        text "━━━━━━━━━━━━━━╲╱━━━━━━━━━━━━━━╲╱━━━━━━━━━━━━━━━━━━━━", size: 14,
+             color: inactive.zero? ? "#67d4c0" : "#ff8b8b"
+        row spacing: 48 do
+          column spacing: 0 do
+            text ready.to_s.rjust(2, "0"), size: 44, bold: true, color: "#67d4c0"
+            text "HEALTHY ROUTES", style: :caption
+          end
+          column spacing: 0 do
+            text inactive.to_s.rjust(2, "0"), size: 30, bold: true,
+                 color: inactive.zero? ? "#829088" : "#ff8b8b"
+            text "NEEDS CARE", style: :caption
+          end
+        end
+        text "SCREEN SHARE  ·  FILE DIALOG  ·  SANDBOX HANDOFF", style: :caption, color: "#829088"
+        separator
+        row spacing: 10 do
+          text "ROUTE EXAM", size: 12, bold: true, color: "#67d4c0", width: 470
+          text "USER SESSION", style: :caption, color: "#829088"
+        end
+
+        if entries.empty?
+          column spacing: 8 do
+            icon :warning, size: 30, color: "#ff8b8b"
+            text "No portal pulse detected", size: 21, bold: true
+            text "No desktop portal services were visible in the user session.",
+                 style: :caption, wrap: true, width: 560
+          end
+        else
+          entries.each_with_index do |entry, index|
+            route_color = entry.fetch("status", "") == "ready" ? "#67d4c0" : "#ff8b8b"
+            column spacing: 4 do
+              row spacing: 10 do
+                text (index + 1).to_s.rjust(2, "0"), style: :caption, color: route_color, width: 24
+                icon status_icon.call(entry.fetch("status", "")), size: 14, color: route_color
+                column spacing: 1 do
+                  text entry.fetch("title"), width: 420, size: 15, bold: true, wrap: true
+                  text entry.fetch("detail", ""), style: :caption, width: 420, wrap: true
                 end
-                separator unless index == entries.length - 1
+                text entry.fetch("status", "").upcase, style: :caption, color: route_color, width: 100
               end
+              text "    ●━━━━━━━━━━━━━━╲╱━━━━━━━━━━━━━━━━━━━━━━━━●", style: :caption, color: route_color
+              text "    #{entry.fetch("meta", "")}", style: :caption, color: "#829088", width: 560, wrap: true
             end
+            separator unless index == entries.length - 1
+          end
+        end
       end
     end
   end
