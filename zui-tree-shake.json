@@ -5,15 +5,13 @@
     "column",
     "container",
     "icon",
-    "rectangle",
     "row",
     "scroll",
-    "section_header",
     "separator",
     "text"
   ],
   "before_bytes": 1549503,
-  "after_bytes": 911233,
-  "saved_bytes": 638270,
+  "after_bytes": 910065,
+  "saved_bytes": 639438,
   "warnings": []
 }
