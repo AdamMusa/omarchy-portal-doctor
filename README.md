@@ -9,6 +9,13 @@ Portal Doctor inventories the active XDG portal services and the Wayland desktop
 
 ![Portal Doctor preview](preview.png)
 
+## Built entirely in Ruby
+
+All application behavior, system integration, and UI declarations are authored in
+Ruby. There is no handwritten QML source. Omarchy UI compiles the Ruby-declared UI
+into `OmarchyUI/Bundles/` and emits the three tiny root QML loader shims required by
+the plugin manifest; those shims are generated packaging output.
+
 ## Why this is distinct
 
 Captive-portal widgets diagnose network login pages. Portal Doctor inspects Linux desktop portals—the user-session services behind screen sharing, file pickers, and sandbox integration.
@@ -61,11 +68,6 @@ rm -r ~/.local/state/omarchy-portal-doctor
 - Tags: system, quickshell, bar
 - Kinds: service, bar widget, panel
 - Target: Omarchy Quattro on x86-64 Linux
-
-## Verification
-
-Executable provenance, retained build sources, checksums, and byte-for-byte reproduction
-instructions are grouped in [`audit/`](audit/README.md).
 
 ## License
 
